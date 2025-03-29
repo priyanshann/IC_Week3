@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
-namespace EntityModels.Models;
+namespace Week3EntityFramework.Models;
 
 public partial class IndustryConnectWeek2Context : DbContext
 {

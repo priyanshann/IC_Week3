@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Week3EntityFramework.Dtos;
 
-var context = new IndustryConnectWeek2Context();
+
 
 //var customer = new Customer
 //{
@@ -40,15 +40,15 @@ var context = new IndustryConnectWeek2Context();
 
 
 
-var sales = context.Sales.Include(c => c.Customer)
-    .Include(p => p.Product).ToList();
+//var sales = context.Sales.Include(c => c.Customer)
+//    .Include(p => p.Product).ToList();
 
-var salesDto = new List<SaleDto>();
+//var salesDto = new List<SaleDto>();
 
-foreach (Sale s in sales)
-{
-    salesDto.Add(new SaleDto(s));
-}
+//foreach (Sale s in sales)
+//{
+//    salesDto.Add(new SaleDto(s));
+//}
 
 
 
@@ -64,21 +64,22 @@ foreach (Sale s in sales)
 //context.SaveChanges();
 
 
+//Console.WriteLine("Which customer record would you like to update?");
+
+//var response = Convert.ToInt32(Console.ReadLine());
+
+//var customer = context.Customers.Include(s => s.Sales)
+//    .ThenInclude(p => p.Product)
+//    .FirstOrDefault(c => c.Id == response);
 
 
-Console.WriteLine("Which customer record would you like to update?");
 
-var response = Convert.ToInt32(Console.ReadLine());
+//var customer1 = context.Customers.Except(s => s.Sales);
 
-var customer = context.Customers.Include(s => s.Sales)
-    .ThenInclude(p => p.Product)
-    .FirstOrDefault(c => c.Id == response);
+//var total = customer.Sales.Select(s => s.Product.Price).Sum();
 
 
-var total = customer.Sales.Select(s => s.Product.Price).Sum();
-
-
-var customerSales = context.CustomerSales.ToList();
+//var customerSales = context.CustomerSales.ToList();
 
 //var totalsales = customer.Sales
 
@@ -99,10 +100,86 @@ var customerSales = context.CustomerSales.ToList();
 //    context.Customers.Add(customer).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
 //    context.SaveChanges();
 //}
+//Console.ReadLine();
+
+// ---------- Week 3 Home Works (Entity Framework) ----------
+var context = new IndustryConnectWeek2Context();
+
+// 1. Using the linq queries retrieve a list of all customers from the database who don't have sales
+
+IEnumerable<Customer> cus1 = context.Customers
+      .Where(c => !context.Sales
+      .Select(s => s.CustomerId)
+      .Contains(c.Id))
+      .ToList();
+
+
+foreach (Customer item in cus1)
+{
+    Console.WriteLine("Customer Name : " + item.FirstName + " " + item.LastName);
+}
+
+// 2. Insert a new customer with a sale record
+
+DateTime bd1 = new DateTime(1981, 09, 22);
+var newCustomer = new Customer()
+{
+    FirstName = "Priyan ",
+    LastName = "Fernando",
+    DateOfBirth = bd1
+};
+
+
+Console.WriteLine("Hi Do you want to add new Customer " + newCustomer.FirstName + " ? (y/n)");
+var response = Console.ReadLine()?.ToLower();
+
+try
+{
+    context.Customers.Add(newCustomer);
+    context.SaveChanges();
+    var newCusId = newCustomer.Id;
+    var newSale = new Sale()
+    {
+        DateSold = DateTime.Now,
+        CustomerId = newCusId,
+        ProductId = 1,
+        StoreId =1
+
+    };
+    context.Sales.Add(newSale);
+    context.SaveChanges();
+    Console.WriteLine("New Sale Added!");
+}
+catch (Exception ex)
+{
+
+    Console.WriteLine(ex.Message);
+}
+
+
+// 3.Add a new store
+
+var newStore = new Store()
+{
+    Name = "CBD Store",
+    Location ="CBD"
+};
+context.Stores.Add(newStore);
+context.SaveChanges();
+
+//4. Find the list of all stores that have sales
+
+IEnumerable<Store> store = context.Stores
+    .Include(s => s.Sales)
+    .ToList();
+    
+foreach(Store st in store)
+{
+    Console.WriteLine("Store :" + st.Name);
+}
 
 
 
-Console.ReadLine();
 
 
 
