@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EntityModels.Models;
+namespace Week3EntityFramework.Models;
 
 public partial class CustomerSale
 {
